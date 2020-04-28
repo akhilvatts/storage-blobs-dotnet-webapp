@@ -29,6 +29,8 @@ jobs:
     - name: Build and Publish Web App
       run: msbuild WebApp-Storage-DotNet.sln /p:platform="Any CPU" /p:configuration="Release"
 
-    - name: Check Workspace Variable
-      run: ls ${{ env.Workspace }}/**/*
-      shell: powershell
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: published_webapp
+        path: ${{ env.Workspace }}\WebApp-Storage-DotNet
