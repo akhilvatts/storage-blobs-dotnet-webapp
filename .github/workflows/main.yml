@@ -10,6 +10,7 @@ env:
 
 jobs:
   build:
+    name: Build_And_Publish
     runs-on: windows-latest
 
     steps:
@@ -37,9 +38,9 @@ jobs:
         path: ${{ env.Workspace }}\WebApp-Storage-DotNet\deploy\_PublishedWebsites\WebApp-Storage-DotNet
         
   deploy:
-    name: Deploy to Azure
-    
+    name: Deploy_to_Azure
     runs-on: windows-latest
+    needs: [build]
 
     steps:
     - name: Download artifact
