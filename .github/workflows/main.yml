@@ -26,11 +26,9 @@ jobs:
     - name: Restore NuGet Packages
       run: nuget restore WebApp-Storage-DotNet.sln
       
-    - name: Build and Publish Web App
-      run: msbuild WebApp-Storage-DotNet.sln /p:platform="Any CPU" /p:configuration="Release"
+    - name: Build and Publish App
+      run: msbuild WebApp-Storage-DotNet.sln /p:platform="Any CPU" /p:configuration="Release" /p:BuildingProject=true /p:outdir="${{ env.Workspace}}/WebApp-Storage-DotNet/deploy"
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: published_webapp
-        path: ${{ env.Workspace }}\WebApp-Storage-DotNet
+    - name: Check Workspace Variable
+      run: ls ${{ env.Workspace }}/WebApp-Storage-DotNet/**/*
+      shell: powershell
