@@ -53,7 +53,7 @@ jobs:
       with:
         files: ${{ env.Workspace}}/*.config, ./**/*.config
       env:
-        StorageConnectionString: {{ secrets.storageAccountConnectionString }}
+        StorageConnectionString: ${{ secrets.storageAccountConnectionString }}
   
     - name: Check Value PS2
       run: Get-Content -Path ./published_webapp/Web.config
