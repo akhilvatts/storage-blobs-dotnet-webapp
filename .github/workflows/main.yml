@@ -1,0 +1,34 @@
+name: Application Build & Release
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  Workspace: ${{ github.workspace }}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Support longpaths
+      run: git config --system core.longpaths true
+
+    - uses: actions/checkout@v2
+
+    - name: Setup MSBuild path
+      uses: microsoft/setup-msbuild@v1
+      
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
+      
+    - name: Restore NuGet Packages
+      run: nuget restore WebApp-Storage-DotNet.sln
+      
+    - name: Build and Publish Web App
+      run: msbuild WebApp-Storage-DotNet.sln /p:platform="Any CPU" /p:configuration="Release"
+
+    - name: Check Workspace Variable
+      run: ls ${{ env.Workspace }}
+      shell: powershell
