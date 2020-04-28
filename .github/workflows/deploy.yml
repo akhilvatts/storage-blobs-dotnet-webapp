@@ -1,0 +1,41 @@
+on:
+  release:
+    types: [created]
+
+env:
+  AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEBAPP_NAME}}
+
+jobs:
+  deploy:
+    name: Deploy to Azure
+    
+    runs-on: windows-latest
+
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v1.0.0
+      with:
+        name: published_webapp
+
+    - name: Check Path
+      run: pwd
+      shell: powershell
+
+    - name: Check Workspace
+      run: ls
+      shell: powershell
+
+    - name: Variable Substitution
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: ${{ env.Workspace}}/*.config, ./**/*.config
+      env:
+        storageAccountConnectionString: "{{ secrets.storageAccountConnectionString }}"
+  
+    - name: Check Value PS1
+      run: Get-Content -Path ./Web.config
+      shell: powershell
+  
+    - name: Check Value PS2
+      run: Get-Content -Path ./*/Web.config
+      shell: powershell
