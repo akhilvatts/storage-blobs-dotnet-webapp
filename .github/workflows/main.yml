@@ -27,8 +27,8 @@ jobs:
       run: nuget restore WebApp-Storage-DotNet.sln
       
     - name: Build and Publish App
-      run: msbuild WebApp-Storage-DotNet.sln /p:platform="Any CPU" /p:configuration="Release" /p:BuildingProject=true /p:outdir="${{ env.Workspace}}/WebApp-Storage-DotNet/deploy"
+      run: msbuild WebApp-Storage-DotNet.sln /p:platform="Any CPU" /p:configuration="Release" /p:BuildingProject=true /p:DeployOnBuild=true /p:outdir="${{ env.Workspace}}/WebApp-Storage-DotNet/deploy"
 
     - name: Check Workspace Variable
-      run: ls ${{ env.Workspace }}/WebApp-Storage-DotNet/**/*
+      run: ls ${{ env.Workspace }}/WebApp-Storage-DotNet/deploy/_PublishedWebsites/**/*
       shell: powershell
