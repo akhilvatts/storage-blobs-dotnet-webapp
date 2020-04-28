@@ -48,14 +48,6 @@ jobs:
       with:
         name: published_webapp
 
-    - name: Check Path
-      run: pwd
-      shell: powershell
-
-    - name: Check Workspace
-      run: ls
-      shell: powershell
-
     - name: Variable Substitution
       uses: microsoft/variable-substitution@v1
       with:
@@ -63,10 +55,13 @@ jobs:
       env:
         StorageConnectionString: "{{ secrets.storageAccountConnectionString }}"
   
-    - name: Check Value PS1
-      run: Get-Content -Path ./Web.config
-      shell: powershell
-  
     - name: Check Value PS2
-      run: Get-Content -Path ./*/Web.config
+      run: Get-Content -Path ./published_webapp/Web.config
       shell: powershell
+
+    - name: 'Deploy to Azure WebApp'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./published_webapp
