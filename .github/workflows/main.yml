@@ -31,37 +31,61 @@ jobs:
     - name: Build and Publish App
       run: msbuild WebApp-Storage-DotNet.sln /p:platform="Any CPU" /p:configuration="Release" /p:BuildingProject=true /p:DeployOnBuild=true /p:outdir="${{ env.Workspace}}/WebApp-Storage-DotNet/deploy"
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: published_webapp
-        path: ${{ env.Workspace }}\WebApp-Storage-DotNet\deploy\_PublishedWebsites\WebApp-Storage-DotNet
-        
-  deploy:
-    name: Deploy_to_Azure
-    runs-on: windows-latest
-    needs: [build]
+    - name: Create Release Package
+      run: Compress-Archive -Path ${{ env.Workspace }}\WebApp-Storage-DotNet\deploy\_PublishedWebsites\WebApp-Storage-DotNet\* -DestinationPath ${{ env.Workspace }}\WebApp-Storage-DotNet\deploy\StorageDotNetApp.zip
 
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: published_webapp
-
-    - name: Variable Substitution
-      uses: microsoft/variable-substitution@v1
-      with:
-        files: ${{ env.Workspace}}/*.config, ./**/*.config
+    - name: Create a Release
+      uses: actions/create-release@v1
       env:
-        StorageConnectionString: ${{ secrets.storageAccountConnectionString }}
-  
-    - name: Check Value PS2
-      run: Get-Content -Path ./published_webapp/Web.config
-      shell: powershell
-
-    - name: 'Deploy to Azure WebApp'
-      uses: azure/webapps-deploy@v2
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ./published_webapp
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ${{ env.Workspace }}\WebApp-Storage-DotNet\deploy\StorageDotNetApp.zip
+          asset_name: StorageDotNetApp.zip
+          asset_content_type: application/zip  
+
+#    - name: Upload Artifact
+#      uses: actions/upload-artifact@v1.0.0
+#      with:
+#        name: published_webapp
+#        path: ${{ env.Workspace }}\WebApp-Storage-DotNet\deploy\_PublishedWebsites\WebApp-Storage-DotNet
+#        
+#  deploy:
+#    name: Deploy_to_Azure
+#    runs-on: windows-latest
+#    needs: [build]
+#
+#    steps:
+#    - name: Download artifact
+#      uses: actions/download-artifact@v1.0.0
+#      with:
+#        name: published_webapp
+#
+#    - name: Variable Substitution
+#      uses: microsoft/variable-substitution@v1
+#      with:
+#        files: ${{ env.Workspace}}/*.config, ./**/*.config
+#      env:
+#        StorageConnectionString: ${{ secrets.storageAccountConnectionString }}
+#  
+#    - name: Check Value PS2
+#      run: Get-Content -Path ./published_webapp/Web.config
+#      shell: powershell
+#
+#    - name: 'Deploy to Azure WebApp'
+#      uses: azure/webapps-deploy@v2
+#      with:
+#        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+#        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+#        package: ./published_webapp
+#
