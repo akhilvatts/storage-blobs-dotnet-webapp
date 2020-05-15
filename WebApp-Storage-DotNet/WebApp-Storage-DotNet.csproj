@@ -16,6 +16,12 @@
     <RootNamespace>WebApp_Storage_DotNet</RootNamespace>
     <AssemblyName>WebApp-Storage-DotNet</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+     <!-- URL settings -->
+    <PackageProjectUrl>https://github.com/akhilvatts/storage-blobs-dotnet-webappr</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/akhilvatts/storage-blobs-dotnet-webapp/blob/master/README.md</PackageReleaseNotes>
+    <!-- Repository set up -->
+    <RepositoryUrl>https://github.com/akhilvatts/storage-blobs-dotnet-webapp.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
